@@ -1,0 +1,22 @@
+{
+  "app": {
+    "name": "Road Warrior",
+    "tagline": "India's delivery riders, going electric — together."
+  },
+  "common": {
+    "loading": "Loading...",
+    "submit": "Submit",
+    "next": "Next",
+    "back": "Back",
+    "skip": "Skip"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "network": "Network error. Check your connection.",
+    "phone_invalid": "Please enter a valid 10-digit phone number."
+  },
+  "survey": {
+    "title": "Tell us about your ride",
+    "intro": "Takes 2 minutes. You earn 10 points just for finishing."
+  }
+}
