@@ -1,1 +1,6 @@
-"""Auth utilities (JWT, password hashing). Populated in PR #2."""
+"""Auth utilities: JWT and password hashing."""
+
+from app.auth import jwt, security
+
+__all__ = ["jwt", "security"]
+

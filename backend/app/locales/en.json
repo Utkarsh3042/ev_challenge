@@ -18,5 +18,13 @@
   "survey": {
     "title": "Tell us about your ride",
     "intro": "Takes 2 minutes. You earn 10 points just for finishing."
+  },
+  "whatsapp": {
+    "welcome": "Hi {name}! 🚗 Thanks for joining Road Warrior. Your code is {code}. You earned {points} points. Share with friends: +5 pts each!",
+    "milestone_10_referrals": "🎉 Wow {name}! 10 riders joined via your link. You've earned a 100-point bonus! Keep going.",
+    "milestone_25_referrals": "🚀 Incredible {name}! 25 referrals — that's legendary. 300-point bonus unlocked.",
+    "milestone_50_referrals": "🏆 You're a Road Warrior legend, {name}! 50 referrals done. 500-point bonus credited.",
+    "score": "Hi {name}! You have {points} points from {count} referrals. Current rank: #{rank}.",
+    "referral_share": "Hey! Join me on Road Warrior — India's EV referral program. Use my code {code}: {url}"
   }
 }

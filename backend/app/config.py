@@ -96,6 +96,31 @@ class Settings(BaseSettings):
     def is_development(self) -> bool:
         return self.app_env == "development"
 
+    # ---------- Milestone config (referral program) ----------
+    # Referrer earns MILESTONE_X_BONUS points each time they hit
+    # MILESTONE_X_REFERRALS successful referrals. The boolean flags
+    # on the Rider row make this idempotent.
+    milestone_10_referrals: int = 10
+    milestone_10_bonus: int = 100
+    milestone_25_referrals: int = 25
+    milestone_25_bonus: int = 300
+    milestone_50_referrals: int = 50
+    milestone_50_bonus: int = 500
+
+    # Signup bonus (every new rider gets this)
+    signup_bonus: int = 10
+    # Per-referral bonus (paid to the referrer when a new rider signs up)
+    referral_bonus: int = 5
+
+    # Referral code settings
+    referral_code_prefix: str = "RW-"
+    referral_code_alphabet: str = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"  # no 0/O/1/I/L
+    referral_code_length: int = 4
+    referral_code_max_attempts: int = 5
+
+    # Frontend URL (used to build share/QR links). Override in prod.
+    frontend_base_url: str = "http://localhost:3000"
+
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:

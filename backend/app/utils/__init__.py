@@ -1,1 +1,6 @@
-"""Misc utility helpers (referral-code generator, etc.). Populated in PR #2."""
+"""Misc utility helpers (seed scripts, etc.)."""
+
+from app.utils import seed
+
+__all__ = ["seed"]
+

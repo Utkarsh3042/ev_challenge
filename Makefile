@@ -72,8 +72,12 @@ db-history: ## Show Alembic migration history
 
 # ---------- Seed / Sample data ----------------------------------------------
 .PHONY: seed
-seed: ## Seed sample data (implemented in a later PR)
-	@echo "🌱  Seed script not implemented yet — will arrive in PR #2."
+seed: ## Seed sample data (idempotent; pass reset=1 to wipe first)
+	cd $(BACKEND_DIR) && python -m app.utils.seed $(if $(reset),--reset)
+
+.PHONY: seed-reset
+seed-reset: ## Wipe & re-seed
+	$(MAKE) seed reset=1
 
 # ---------- Dev servers ------------------------------------------------------
 .PHONY: backend
