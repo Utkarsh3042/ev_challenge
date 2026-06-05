@@ -6,7 +6,6 @@ const withNextIntl = createNextIntlPlugin('./lib/i18n-config.ts');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: 'standalone',
   eslint: { ignoreDuringBuilds: true },
 };
 
@@ -22,5 +21,6 @@ module.exports = withSentryConfig(
     transpileClientSDK: true,
     hideSourceMaps: true,
     disableLogger: true,
+    autoInstrumentMiddleware: false,
   }
 );
