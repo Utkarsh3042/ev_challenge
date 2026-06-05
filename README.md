@@ -2,7 +2,7 @@
 
 > **Empowering India's delivery riders to switch to electric vehicles — one referral at a time.**
 
-Road Warrior is a survey + referral platform built for delivery riders (Swiggy, Zomato, Rapido, Ola, Uber, etc.) that helps them understand the benefits of electric vehicles, captures their pain points with petrol vehicles, and rewards them for referring fellow riders. Top referrers are featured in our public leaderboard and may receive exclusive rewards.
+Road Warrior is a survey + referral platform built for delivery riders (Swiggy, Zomato, Rapido, Ola, Uber, etc.) that helps them understand the benefits of electric vehicles, captures their pain points with petrol vehicles, and rewards them for referring fellow riders. Top referrers are featured in a public leaderboard and may receive exclusive rewards.
 
 ---
 
@@ -28,14 +28,14 @@ Each successful referral = **+5 points**. Milestones at 10 / 25 / 50 referrals u
 
 ## 🛠️ Tech Stack
 
-| Layer       | Technology                                                        |
-|-------------|-------------------------------------------------------------------|
-| **Backend** | Python 3.11 · FastAPI · SQLAlchemy 2.0 (async) · asyncpg · Alembic |
-| **Database**| Neon (serverless PostgreSQL 16)                                   |
-| **Frontend**| Next.js 14 (App Router) · TypeScript · Tailwind CSS · next-intl   |
-| **Messaging**| Twilio WhatsApp Business API (PR #4)                             |
-| **Infra**   | Docker · docker-compose · Makefile                                |
-| **Quality** | pytest · ruff · black · mypy · pre-commit                         |
+| Layer        | Technology                                                               |
+|--------------|--------------------------------------------------------------------------|
+| **Backend**  | Python 3.11 · FastAPI · SQLAlchemy 2.0 (async) · asyncpg · Alembic      |
+| **Database** | Neon (serverless PostgreSQL 16)                                          |
+| **Frontend** | Next.js 14 (App Router) · TypeScript · Tailwind CSS · next-intl          |
+| **Messaging**| Twilio WhatsApp Business API                                             |
+| **Hosting**  | Frontend → Vercel · Backend → Render                                     |
+| **Quality**  | pytest · ruff · black · mypy · pre-commit                                |
 
 ---
 
@@ -43,30 +43,51 @@ Each successful referral = **+5 points**. Milestones at 10 / 25 / 50 referrals u
 
 - 📝 Multi-step rider survey (web + WhatsApp)
 - 🌍 Trilingual: English, Hindi, Kannada
-- 🏆 Public leaderboard with milestone badges (10/25/50)
+- 🏆 Public leaderboard with milestone badges (10 / 25 / 50 referrals)
 - 🔗 Unique referral codes + shareable links + QR codes
-- 📊 Admin dashboard (PR #2)
-- 💬 WhatsApp chatbot with stateful sessions (PR #4)
-- 📈 Real-time points engine (PR #2)
+- 📊 Admin dashboard with analytics
+- 💬 WhatsApp chatbot with stateful sessions
+- 📈 Real-time points engine
 
 ---
 
-## 🚀 Quick Start (TL;DR)
+## 🚀 Local Development
+
+### Prerequisites
+
+- Python 3.11+
+- Node.js 20+
+- A [Neon](https://neon.tech) PostgreSQL database
+
+### Setup
 
 ```bash
 git clone <repo-url> road-warrior
 cd road-warrior
-cp backend/.env.example backend/.env       # fill in DATABASE_URL (Neon)
-cp frontend/.env.local.example frontend/.env.local
-make install                                # install all deps
-make db-migrate                             # apply schema to Neon
-make docker-up                              # start full local stack
+
+# Backend
+cp backend/.env.example backend/.env   # fill in DATABASE_URL (Neon) + JWT_SECRET
+cd backend && python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+alembic upgrade head                   # run migrations
+uvicorn app.main:app --reload          # starts on http://localhost:8000
+
+# Frontend (new terminal)
+cd frontend
+cp .env.local.example .env.local       # set NEXT_PUBLIC_API_URL=http://localhost:8000/api
+npm install
+npm run dev                            # starts on http://localhost:3000
 ```
 
-Then visit:
-- 🌐 **Frontend:** http://localhost:3000
-- 📚 **API docs:** http://localhost:8000/docs
-- ❤️ **Health check:** http://localhost:8000/api/health
+### Local URLs
+
+| Service         | URL                                  |
+|-----------------|--------------------------------------|
+| Frontend        | http://localhost:3000                |
+| API docs        | http://localhost:8000/docs           |
+| Health check    | http://localhost:8000/api/health     |
+| Admin dashboard | http://localhost:3000/admin          |
 
 ---
 
@@ -74,60 +95,94 @@ Then visit:
 
 ```
 ev_challenge/
-├── backend/                 # FastAPI + SQLAlchemy + Alembic
-│   ├── app/                 # Application code (models, schemas, api, services)
-│   ├── alembic/             # Database migrations
-│   ├── tests/               # pytest suite
-│   ├── requirements.txt
-│   └── Dockerfile
-├── frontend/                # Next.js 14 (App Router)
-│   ├── app/                 # Pages & layouts
-│   └── ...
-├── docker-compose.yml       # Local dev stack
-├── Makefile                 # All common commands
-├── README.md                # ← you are here
-├── SETUP.md                 # Detailed setup guide
-├── DEPLOYMENT.md            # Production deployment guide
-├── ENV.md                   # All env vars explained
-└── prs/                     # PR-by-PR specifications
+├── backend/                  # FastAPI + SQLAlchemy + Alembic
+│   ├── app/
+│   │   ├── api/              # Route handlers (riders, admin, webhooks)
+│   │   ├── models/           # SQLAlchemy ORM models
+│   │   ├── schemas/          # Pydantic request/response schemas
+│   │   ├── services/         # Business logic (referral, points)
+│   │   └── main.py           # FastAPI app factory
+│   ├── alembic/              # Database migrations
+│   ├── tests/                # pytest suite
+│   └── requirements.txt
+├── frontend/                 # Next.js 14 (App Router)
+│   ├── app/
+│   │   ├── [lang]/           # Localised pages (en / hi / kn)
+│   │   └── admin/            # Admin dashboard pages
+│   ├── components/           # Shared UI components
+│   ├── lib/                  # API client, types, i18n config
+│   ├── messages/             # Translation JSON files
+│   └── middleware.ts         # Locale routing middleware
+├── render.yaml               # Render Blueprint (backend deployment)
+├── Makefile                  # Common dev commands
+└── README.md                 # ← you are here
 ```
+
+---
+
+## ☁️ Deployment
+
+### Backend → Render
+
+The `render.yaml` file at the project root is a Render Blueprint. Connect your GitHub repo on [Render](https://render.com), select **Blueprint**, and it will auto-configure the Python service.
+
+**Required environment variables on Render:**
+
+| Variable              | Description                          |
+|-----------------------|--------------------------------------|
+| `DATABASE_URL`        | Neon PostgreSQL connection string    |
+| `JWT_SECRET`          | Secret for admin JWT tokens          |
+| `FRONTEND_BASE_URL`   | Your Vercel frontend URL             |
+| `WHATSAPP_TOKEN`      | Twilio / WhatsApp token (optional)   |
+| `WHATSAPP_PHONE_ID`   | WhatsApp phone ID (optional)         |
+
+### Frontend → Vercel
+
+1. Import your GitHub repo on [Vercel](https://vercel.com)
+2. Set **Root Directory** to `frontend`
+3. Add environment variables:
+
+| Variable                | Description                         |
+|-------------------------|-------------------------------------|
+| `NEXT_PUBLIC_API_URL`   | Render backend URL (no trailing `/`)|
+| `NEXT_PUBLIC_BASE_URL`  | Your Vercel frontend URL            |
+
+Vercel auto-deploys on every push to `main`.
 
 ---
 
 ## 🔐 Environment Variables
 
-See **[ENV.md](./ENV.md)** for the full list with defaults, types, and examples.
+See **[ENV.md](./ENV.md)** for the full reference with types, defaults, and examples.
 
 ---
 
-## 🧪 Manual Test Plan
+## 🧪 Testing
 
-See **[SETUP.md → "Verification"](./SETUP.md#-verification)** for the full smoke test.
+```bash
+# Backend tests
+cd backend
+source venv/bin/activate
+pytest
+
+# Lint + type checks
+ruff check app/
+```
 
 ---
 
 ## 🤝 Contributing
 
-1. Read `prs/pr-N-*.md` for the relevant PR spec
-2. Create a feature branch: `git checkout -b feature/pr-N-short-name`
-3. Install pre-commit hooks: `pre-commit install`
-4. Make your changes — run `make lint test` before pushing
-5. Open a PR referencing the PR number
+1. Create a feature branch: `git checkout -b feature/short-name`
+2. Install pre-commit hooks: `pre-commit install`
+3. Make your changes — run `pytest` and `ruff` before pushing
+4. Open a PR against `main`
 
 ---
 
 ## 📄 License
 
-TBD — internal project for the EV Challenge. Contact maintainers before reusing.
-
----
-
-## 🔗 Related Docs
-
-- 📘 [SETUP.md](./SETUP.md) — local dev setup walkthrough
-- 🚢 [DEPLOYMENT.md](./DEPLOYMENT.md) — production deployment
-- 🔐 [ENV.md](./ENV.md) — environment variable reference
-- 📋 `prs/` — detailed PR-by-PR specifications
+Internal project for the EV Challenge. Contact maintainers before reusing.
 
 ---
 
