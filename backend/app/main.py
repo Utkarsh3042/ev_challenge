@@ -97,7 +97,7 @@ def create_app() -> FastAPI:
         return {"status": "ok", "app": settings.app_name, "version": __version__}
 
     @app.get(f"{settings.api_v1_prefix}/readyz", tags=["meta"])
-    async def readyz() -> dict:
+    async def readyz() -> dict | JSONResponse:
         """Readiness probe — verifies DB connectivity."""
         from sqlalchemy import text
         try:
