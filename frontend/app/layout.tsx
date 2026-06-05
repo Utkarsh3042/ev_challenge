@@ -53,6 +53,8 @@ export const viewport: Viewport = {
   themeColor: '#FF6B1A',
 };
 
+import { AnalyticsProvider } from '../components/common/AnalyticsProvider';
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
@@ -61,7 +63,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <body className="min-h-screen bg-canvas text-secondary-900 antialiased">
-        {children}
+        <AnalyticsProvider>
+          {children}
+        </AnalyticsProvider>
       </body>
     </html>
   );

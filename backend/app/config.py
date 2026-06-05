@@ -63,6 +63,13 @@ class Settings(BaseSettings):
     twilio_auth_token: str | None = None
     twilio_whatsapp_from: str | None = None
     twilio_webhook_url: str | None = None
+    twilio_auth_token_for_signing: str | None = None
+    whatsapp_signature_verify: bool = True
+
+    # ---------- Observability (PR #5) ----------
+    sentry_dsn: str | None = None
+    posthog_project_api_key: str | None = None
+    posthog_host: str = "https://app.posthog.com"
 
     # ---------- Feature flags ----------
     enable_referral_program: bool = True

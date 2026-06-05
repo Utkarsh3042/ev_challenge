@@ -73,10 +73,8 @@ async function request<T>(path: string, opts: FetchOpts = {}): Promise<T> {
   if (body != null) {
     init.body = typeof body === 'string' ? body : JSON.stringify(body);
   }
-  // For RSC fetches we want to forward cookies for admin auth
-  if (typeof window === 'undefined') {
-    (init as RequestInit & { credentials?: RequestCredentials }).credentials = 'include';
-  }
+  // Forward cookies for admin auth in both client and server fetches
+  (init as RequestInit & { credentials?: RequestCredentials }).credentials = 'include';
 
   let res: Response;
   try {

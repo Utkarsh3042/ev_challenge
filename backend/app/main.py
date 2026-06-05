@@ -12,18 +12,21 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 
 from app import __version__
 from app.api import admin, meta, riders, webhooks
 from app.config import settings
 from app.database import dispose_engine
 
-# Configure logging as early as possible
-logging.basicConfig(
-    level=settings.log_level,
-    format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
-)
+from app.logging_config import setup_logging
+from app.monitoring.sentry import init_sentry
+from app.monitoring.posthog import init_posthog
+
+setup_logging()
+init_sentry()
+init_posthog()
+
 logger = logging.getLogger("road_warrior")
 
 
@@ -93,6 +96,25 @@ def create_app() -> FastAPI:
         """Liveness probe — used by Docker, K8s, Fly, Render, etc."""
         return {"status": "ok", "app": settings.app_name, "version": __version__}
 
+    @app.get(f"{settings.api_v1_prefix}/readyz", tags=["meta"])
+    async def readyz() -> dict:
+        """Readiness probe — verifies DB connectivity."""
+        from sqlalchemy import text
+        try:
+            from app.database import engine
+            async with engine.begin() as conn:
+                await conn.execute(text("SELECT 1"))
+            return {"status": "ready"}
+        except Exception as exc:
+            logger.error("Readiness check failed: %s", exc)
+            return JSONResponse(status_code=503, content={"status": "unavailable", "detail": str(exc)})
+
+    @app.get(f"{settings.api_v1_prefix}/metrics", tags=["meta"])
+    async def metrics() -> Response:
+        """Prometheus metrics stub."""
+        # Note: full Prometheus instrumentation will be added in Phase 2
+        return Response(content="# HELP status Application status\nstatus 1\n", media_type="text/plain")
+
     @app.get("/", tags=["meta"], include_in_schema=False)
     async def root() -> dict:
         return {
@@ -103,12 +125,13 @@ def create_app() -> FastAPI:
         }
 
     # ---------- Routers ----------
+    from app.api import webhooks_status
     app.include_router(riders.router, prefix=settings.api_v1_prefix)
     app.include_router(admin.router, prefix=settings.api_v1_prefix)
     app.include_router(webhooks.router, prefix=settings.api_v1_prefix)
+    app.include_router(webhooks_status.router, prefix=settings.api_v1_prefix)
     app.include_router(meta.router, prefix=settings.api_v1_prefix)
 
     return app
-
 
 app = create_app()
