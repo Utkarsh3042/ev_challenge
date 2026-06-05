@@ -7,15 +7,6 @@ const withNextIntl = createNextIntlPlugin('./lib/i18n-config.ts');
 const nextConfig = {
   reactStrictMode: true,
   eslint: { ignoreDuringBuilds: true },
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/en',
-        permanent: false,
-      },
-    ];
-  },
 };
 
 module.exports = withNextIntl(nextConfig);
