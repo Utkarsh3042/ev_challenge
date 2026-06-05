@@ -34,6 +34,18 @@ interface Props {
 export function SectionB({ value, onChange, errors }: Props) {
   const t = useTranslations('form.sectionB');
   const tVal = useTranslations('form.validation');
+  
+  const fuelOptionsDynamic = fuelOptions.map(v => {
+    let key = v.value as string;
+    if (key === 'petrol_pump') key = 'petrolPump';
+    if (key === 'home_charging') key = 'homeCharging';
+    if (key === 'battery_swap') key = 'batterySwap';
+    return {
+      ...v,
+      label: t(key as any) || v.label
+    };
+  });
+
   // Touched-derived errors
   const fuelError = errors.fuel_method ?? (!value.fuel_method ? tVal('fuelMethodRequired') : null);
 
@@ -77,7 +89,7 @@ export function SectionB({ value, onChange, errors }: Props) {
           name="fuel_method"
           value={value.fuel_method || null}
           onChange={(v) => onChange({ fuel_method: v as FuelMethod })}
-          options={fuelOptions}
+          options={fuelOptionsDynamic}
           columns={2}
           error={fuelError}
         />

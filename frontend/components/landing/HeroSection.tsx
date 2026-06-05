@@ -5,12 +5,16 @@ import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { ArrowRight, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { LanguageSwitcher } from '../common/LanguageSwitcher';
 
 export function HeroSection() {
   const t = useTranslations('landing');
   const { lang } = useParams<{ lang: string }>();
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-primary-500 to-primary-700 px-4 pt-10 pb-24 text-white sm:px-6 sm:pt-14 sm:pb-32">
+      <div className="absolute top-4 right-4 z-10">
+        <LanguageSwitcher />
+      </div>
       <div className="mx-auto max-w-3xl text-center">
         <div className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-medium backdrop-blur">
           <Zap className="h-3.5 w-3.5" />

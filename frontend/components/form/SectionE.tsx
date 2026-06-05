@@ -21,7 +21,18 @@ const switchOptions: Array<{ value: SwitchIntent; label: string; icon: string }>
 
 export function SectionE({ value, onChange, errors }: Props) {
   const t = useTranslations('form.sectionE');
+  const tCommon = useTranslations('common');
   const tVal = useTranslations('form.validation');
+  
+  const switchOptionsDynamic = switchOptions.map(v => {
+    let label = v.label;
+    if (v.value === 'yes') label = tCommon('yes');
+    if (v.value === 'no') label = tCommon('no');
+    if (v.value === 'already_ev') label = t('alreadyOnEV');
+    if (v.value === 'need_info') label = t('needMoreInfo');
+    return { ...v, label };
+  });
+
   return (
     <div className="space-y-5">
       <header>
@@ -37,7 +48,7 @@ export function SectionE({ value, onChange, errors }: Props) {
           name="open_to_switch"
           value={value.open_to_switch || null}
           onChange={(v) => onChange({ open_to_switch: v as SwitchIntent })}
-          options={switchOptions}
+          options={switchOptionsDynamic}
           columns={2}
           error={errors.open_to_switch ?? (!value.open_to_switch ? tVal('switchRequired') : null)}
         />

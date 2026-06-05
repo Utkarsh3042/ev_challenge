@@ -108,6 +108,11 @@ async function request<T>(path: string, opts: FetchOpts = {}): Promise<T> {
       errPayload?.message ||
       (typeof data === 'string' && data) ||
       `Request failed with status ${res.status}`;
+      
+    if (res.status === 422 && typeof window !== 'undefined') {
+      console.error('Validation Error Details:', data);
+      alert(`Validation Error 422: ${JSON.stringify(data, null, 2)}`);
+    }
     throw new ApiClientError(message, res.status, errPayload);
   }
   return data as T;

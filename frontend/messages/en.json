@@ -182,6 +182,26 @@
       "fuelMethodRequired": "Please select how you fuel/charge",
       "insuranceRequired": "Please answer this question",
       "switchRequired": "Please select your preference"
+    },
+    "options": {
+      "cities": {
+        "Bangalore": "Bangalore",
+        "Mumbai": "Mumbai",
+        "Delhi": "Delhi",
+        "Hyderabad": "Hyderabad",
+        "Chennai": "Chennai",
+        "Pune": "Pune",
+        "Other": "Other"
+      },
+      "platforms": {
+        "swiggy": "Swiggy",
+        "zomato": "Zomato",
+        "blinkit": "Blinkit",
+        "porter": "Porter",
+        "dunzo": "Dunzo",
+        "rapido": "Rapido",
+        "other": "Other"
+      }
     }
   },
   "success": {

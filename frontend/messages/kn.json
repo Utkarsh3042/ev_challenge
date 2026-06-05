@@ -182,6 +182,26 @@
       "fuelMethodRequired": "ದಯವಿಟ್ಟು ಇಂಧನ/ಚಾರ್ಜಿಂಗ್ ವಿಧಾನವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
       "insuranceRequired": "ದಯವಿಟ್ಟು ಈ ಪ್ರಶ್ನೆಗೆ ಉತ್ತರಿಸಿ",
       "switchRequired": "ದಯವಿಟ್ಟು ನಿಮ್ಮ ಆಯ್ಕೆಯನ್ನು ಆರಿಸಿ"
+    },
+    "options": {
+      "cities": {
+        "Bangalore": "ಬೆಂಗಳೂರು",
+        "Mumbai": "ಮುಂಬೈ",
+        "Delhi": "ದೆಹಲಿ",
+        "Hyderabad": "ಹೈದರಾಬಾದ್",
+        "Chennai": "ಚೆನ್ನೈ",
+        "Pune": "ಪುಣೆ",
+        "Other": "ಇತರೆ"
+      },
+      "platforms": {
+        "swiggy": "Swiggy",
+        "zomato": "Zomato",
+        "blinkit": "Blinkit",
+        "porter": "Porter",
+        "dunzo": "Dunzo",
+        "rapido": "Rapido",
+        "other": "ಇತರೆ"
+      }
     }
   },
   "success": {

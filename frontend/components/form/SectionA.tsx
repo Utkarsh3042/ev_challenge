@@ -15,21 +15,25 @@ interface Props {
   errors: Partial<Record<keyof FormState['sectionA'], string>>;
 }
 
-const platformOptions = PLATFORMS.map((p) => ({
-  value: p,
-  label: p[0].toUpperCase() + p.slice(1),
-}));
-
-const localeOptions = LOCALES.map((l) => ({
-  value: l,
-  label: l === 'en' ? 'English' : l === 'hi' ? 'हिंदी' : 'ಕನ್ನಡ',
-}));
-
-const cityOptions = CITIES.map((c) => ({ value: c, label: c }));
-
 export function SectionA({ value, onChange, errors }: Props) {
   const t = useTranslations('form.sectionA');
   const tVal = useTranslations('form.validation');
+  const tOpt = useTranslations('form.options');
+
+  const platformOptions = PLATFORMS.map((p) => ({
+    value: p,
+    label: tOpt(`platforms.${p}`) || (p[0].toUpperCase() + p.slice(1)),
+  }));
+
+  const localeOptions = LOCALES.map((l) => ({
+    value: l,
+    label: l === 'en' ? 'English' : l === 'hi' ? 'हिंदी' : 'ಕನ್ನಡ',
+  }));
+
+  const cityOptions = CITIES.map((c) => ({
+    value: c,
+    label: tOpt(`cities.${c}`) || c,
+  }));
 
   // Live phone formatting
   const [phoneDisplay, setPhoneDisplay] = useState(value.phone || '');
