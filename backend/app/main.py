@@ -58,10 +58,12 @@ def create_app() -> FastAPI:
     )
 
     # ---------- CORS ----------
+    # In development allow all origins so port-forwarded phones / tunnel URLs work.
+    # In production we lock down to the explicit whitelist from settings.
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.cors_origins,
-        allow_credentials=True,
+        allow_origins=["*"] if settings.is_development else settings.cors_origins,
+        allow_credentials=not settings.is_development,  # credentials + wildcard is invalid
         allow_methods=["*"],
         allow_headers=["*"],
     )
@@ -96,7 +98,7 @@ def create_app() -> FastAPI:
         """Liveness probe — used by Docker, K8s, Fly, Render, etc."""
         return {"status": "ok", "app": settings.app_name, "version": __version__}
 
-    @app.get(f"{settings.api_v1_prefix}/readyz", tags=["meta"])
+    @app.get(f"{settings.api_v1_prefix}/readyz", tags=["meta"], response_model=None)
     async def readyz() -> dict | JSONResponse:
         """Readiness probe — verifies DB connectivity."""
         from sqlalchemy import text

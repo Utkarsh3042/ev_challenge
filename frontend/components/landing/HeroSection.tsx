@@ -11,8 +11,9 @@ export function HeroSection() {
   const t = useTranslations('landing');
   const { lang } = useParams<{ lang: string }>();
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-primary-500 to-primary-700 px-4 pt-10 pb-24 text-white sm:px-6 sm:pt-14 sm:pb-32">
-      <div className="absolute top-4 right-4 z-10">
+    <section className="relative overflow-hidden bg-gradient-to-br from-primary-500 to-primary-700 px-4 pt-6 pb-24 text-white sm:px-6 sm:pt-10 sm:pb-32">
+      {/* Language switcher — centered at top */}
+      <div className="mb-6 flex justify-center">
         <LanguageSwitcher />
       </div>
       <div className="mx-auto max-w-3xl text-center">

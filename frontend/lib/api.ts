@@ -24,8 +24,13 @@ import type {
   LeaderboardEntry,
 } from './types';
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, '') || 'http://localhost:8000';
+// BASE_URL is intentionally empty when using Next.js rewrite proxy (/api/* → backend).
+// Set NEXT_PUBLIC_API_BASE_URL to a full URL only if bypassing the proxy (e.g. SSR).
+const BASE_URL = (
+  process.env.NEXT_PUBLIC_API_URL ??
+  process.env.NEXT_PUBLIC_API_BASE_URL ??
+  ''
+).replace(/\/$/, '');
 
 export class ApiClientError extends Error {
   status: number;

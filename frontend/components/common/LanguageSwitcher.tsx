@@ -3,24 +3,34 @@
 import { useLocale } from 'next-intl'
 import { useRouter, usePathname } from '../../lib/navigation'
 import { locales, languageNames, type Locale } from '../../lib/locales'
-import { Select } from '../ui/select'
 
 export function LanguageSwitcher() {
   const locale = useLocale() as Locale
   const router = useRouter()
   const pathname = usePathname()
 
-  function onChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    router.replace(pathname, { locale: e.target.value as Locale })
+  function switchTo(next: Locale) {
+    if (next !== locale) router.replace(pathname, { locale: next })
   }
 
   return (
-    <Select value={locale} onChange={onChange} className="w-[120px] bg-white/20 text-white backdrop-blur-sm border-white/30 text-sm">
+    <div className="inline-flex items-center rounded-full bg-white/15 p-0.5 backdrop-blur-sm ring-1 ring-white/25">
       {locales.map((cur) => (
-        <option key={cur} value={cur} className="text-secondary-900">
+        <button
+          key={cur}
+          onClick={() => switchTo(cur)}
+          className={[
+            'rounded-full px-3 py-1 text-xs font-semibold transition-all duration-200',
+            cur === locale
+              ? 'bg-white text-primary-600 shadow-sm'
+              : 'text-white/80 hover:text-white',
+          ].join(' ')}
+          aria-pressed={cur === locale}
+          aria-label={`Switch to ${languageNames[cur]}`}
+        >
           {languageNames[cur]}
-        </option>
+        </button>
       ))}
-    </Select>
+    </div>
   )
 }
