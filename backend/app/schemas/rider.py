@@ -67,9 +67,6 @@ class RiderSubmit(BaseModel):
     website: str | None = Field(default=None, description="Honeypot field")
     otp: str = Field(min_length=4, max_length=6, description="OTP code")
 
-class SendOTPRequest(BaseModel):
-    phone: str
-
 
     @field_validator("phone")
     @classmethod
@@ -100,6 +97,9 @@ class SendOTPRequest(BaseModel):
                 seen.add(s)
                 out.append(s)
         return out
+
+class SendOTPRequest(BaseModel):
+    phone: str
 
 
 # ---------- Output: survey submission ----------------------------------------
