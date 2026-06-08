@@ -52,8 +52,10 @@ export const EMPTY_FORM_STATE: FormState = {
   sectionA: {
     full_name: '',
     phone: '',
+    pin_code: '',
     city: '',
     platform: '',
+    platforms: [],
     years_experience: '',
     preferred_language: '',
   },
