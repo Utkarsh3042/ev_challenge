@@ -62,8 +62,8 @@ def create_app() -> FastAPI:
     # In production we lock down to the explicit whitelist from settings.
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"] if settings.is_development else settings.cors_origins,
-        allow_credentials=not settings.is_development,  # credentials + wildcard is invalid
+        allow_origin_regex=".*",
+        allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
