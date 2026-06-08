@@ -42,7 +42,6 @@ export default function AdminLoginPage() {
         <Card>
           <form onSubmit={handleLogin} className="flex flex-col gap-5">
             {error && <ErrorState message={error} />}
-            
             <Input
               label="Email address"
               type="email"
@@ -59,7 +58,6 @@ export default function AdminLoginPage() {
               required
               autoComplete="current-password"
             />
-            
             <Button type="submit" disabled={loading} className="mt-2">
               {loading ? <LoadingSpinner size="sm" /> : 'Log in to Admin'}
             </Button>

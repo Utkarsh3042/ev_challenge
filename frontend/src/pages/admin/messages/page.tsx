@@ -42,7 +42,7 @@ export default function MessagesPage() {
     <div className="flex flex-col gap-6 animate-fade-in relative">
       <div className="flex items-center gap-4">
         <span className="text-sm font-medium text-secondary-600">Direction:</span>
-        <select 
+        <select
           className="rounded border border-secondary-200 bg-white px-3 py-1.5 text-sm"
           value={filterDirection}
           onChange={(e) => setFilterDirection(e.target.value as any)}
@@ -72,8 +72,8 @@ export default function MessagesPage() {
               </thead>
               <tbody className="divide-y divide-secondary-200">
                 {filtered.map((msg) => (
-                  <tr 
-                    key={msg.id} 
+                  <tr
+                    key={msg.id}
                     className="hover:bg-secondary-50/50 cursor-pointer"
                     onClick={() => setSelectedMsg(msg)}
                   >
@@ -123,7 +123,7 @@ export default function MessagesPage() {
       {selectedMsg && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <Card className="w-full max-w-lg shadow-xl relative animate-in slide-in-from-bottom-4">
-            <button 
+            <button
               className="absolute top-4 right-4 text-secondary-400 hover:text-secondary-600"
               onClick={() => setSelectedMsg(null)}
             >
@@ -136,7 +136,6 @@ export default function MessagesPage() {
                 {selectedMsg.phone}
               </p>
             </div>
-            
             <div className="bg-secondary-50 rounded-lg p-4 font-mono text-sm text-secondary-800 whitespace-pre-wrap max-h-[60vh] overflow-y-auto">
               {selectedMsg.body}
             </div>
@@ -146,7 +145,7 @@ export default function MessagesPage() {
                 <strong>Error:</strong> {selectedMsg.error}
               </div>
             )}
-            
+
             <div className="mt-6 flex justify-between items-center text-xs text-secondary-400">
               <span>Status: <span className="uppercase text-secondary-600 font-medium">{selectedMsg.status}</span></span>
               <span>{new Date(selectedMsg.sent_at).toLocaleString()}</span>
