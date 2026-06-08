@@ -174,7 +174,7 @@ async def list_segment(
     )
     rows = (await db.execute(stmt)).scalars().all()
     return SegmentListResponse(
-        segment=name, total=int(total),
+        segment=name, total=total,
         riders=[RiderListItem.model_validate(r) for r in rows],
     )
 
