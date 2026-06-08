@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+import re
 import uuid
-from typing import Annotated, Literal
+from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 # ---------- Enumerations (kept narrow to control data quality) ----------------
 City = Literal[
@@ -17,6 +18,22 @@ FuelMethod = Literal["petrol_pump", "home_charging", "battery_swap", "other"]
 Language = Literal["en", "hi", "kn"]
 InsuranceAnswer = Literal["yes", "no", "not_sure"]
 SwitchIntent = Literal["yes", "no", "already_ev", "need_info"]
+
+
+# ---------- OTP Request (standalone, must be defined before RiderSubmit) ------
+class SendOTPRequest(BaseModel):
+    """Payload of POST /api/riders/send-otp."""
+    phone: str
+
+    @field_validator("phone")
+    @classmethod
+    def _validate_phone(cls, v: str) -> str:
+        digits = re.sub(r"\D", "", v)
+        if len(digits) == 10 and not re.match(r"^[6-9]\d{9}$", digits):
+            raise ValueError("Invalid Indian mobile number")
+        if len(digits) > 10 and not re.match(r"^[6-9]\d{9}$", digits[-10:]):
+            raise ValueError("Invalid Indian mobile number")
+        return v
 
 
 # ---------- Input: survey submission -----------------------------------------
@@ -67,15 +84,12 @@ class RiderSubmit(BaseModel):
     website: str | None = Field(default=None, description="Honeypot field")
     otp: str = Field(min_length=4, max_length=6, description="OTP code")
 
-
     @field_validator("phone")
     @classmethod
     def _validate_phone(cls, v: str) -> str:
-        import re
         digits = re.sub(r"\D", "", v)
         if len(digits) == 10 and not re.match(r"^[6-9]\d{9}$", digits):
             raise ValueError("Invalid Indian mobile number")
-        # If it has country code, check the last 10 digits
         if len(digits) > 10 and not re.match(r"^[6-9]\d{9}$", digits[-10:]):
             raise ValueError("Invalid Indian mobile number")
         return v
@@ -97,9 +111,6 @@ class RiderSubmit(BaseModel):
                 seen.add(s)
                 out.append(s)
         return out
-
-class SendOTPRequest(BaseModel):
-    phone: str
 
 
 # ---------- Output: survey submission ----------------------------------------
