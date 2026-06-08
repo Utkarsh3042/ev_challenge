@@ -1,10 +1,12 @@
 'use client';
 
 import { useTranslation } from 'react-i18next';
-import { Edit2 } from 'lucide-react';
+import { Edit2, ShieldCheck } from 'lucide-react';
 import type { FormState } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/utils';
+import { api } from '@/lib/api';
+import { useState } from 'react';
 
 interface Row {
   label: string;
@@ -14,7 +16,7 @@ interface Row {
 interface Props {
   state: FormState;
   onEdit: (sectionIndex: number) => void;
-  onSubmit: () => void;
+  onSubmit: (otp: string) => void;
   loading?: boolean;
   error?: string | null;
 }
@@ -22,6 +24,36 @@ interface Props {
 export function ReviewSubmit({ state, onEdit, onSubmit, loading, error }: Props) {
   const { t } = useTranslation('form');
   const { t: tCommon } = useTranslation('common');
+  const [privacyConsent, setPrivacyConsent] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpValue, setOtpValue] = useState('');
+  const [sendingOtp, setSendingOtp] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
+
+  const handleAction = async () => {
+    setLocalError(null);
+    if (!privacyConsent) {
+      setLocalError('You must agree to the Privacy Policy to proceed.');
+      return;
+    }
+    if (!otpSent) {
+      setSendingOtp(true);
+      try {
+        await api.sendOtp({ phone: state.sectionA.phone });
+        setOtpSent(true);
+      } catch (e: any) {
+        setLocalError(e.message || 'Failed to send OTP');
+      } finally {
+        setSendingOtp(false);
+      }
+    } else {
+      if (otpValue.length < 4) {
+        setLocalError('Please enter a valid OTP');
+        return;
+      }
+      onSubmit(otpValue);
+    }
+  };
 
   const rows: Array<{ title: string; rows: Row[] }> = [
     {
@@ -114,13 +146,44 @@ export function ReviewSubmit({ state, onEdit, onSubmit, loading, error }: Props)
           </section>
         ))}
       </div>
-      {error ? (
+      {(error || localError) ? (
         <p className="rounded-lg border border-danger-500/30 bg-danger-500/5 px-3 py-2 text-sm text-danger-600">
-          {error}
+          {error || localError}
         </p>
       ) : null}
-      <Button onClick={onSubmit} loading={loading} size="xl" fullWidth>
-        {tCommon('submit')}
+      
+      {otpSent && (
+        <div className="rounded-2xl border border-primary-200 bg-primary-50 p-4">
+          <label className="mb-2 flex items-center gap-2 text-sm font-bold text-primary-900">
+            <ShieldCheck className="h-4 w-4" />
+            Enter OTP sent to +91 {state.sectionA.phone}
+          </label>
+          <input
+            type="text"
+            maxLength={6}
+            value={otpValue}
+            onChange={(e) => setOtpValue(e.target.value.replace(/\D/g, ''))}
+            className="w-full rounded-xl border border-primary-300 bg-white px-4 py-3 text-center text-xl font-bold tracking-widest outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+            placeholder="••••••"
+          />
+        </div>
+      )}
+
+      <div className="flex items-start gap-3 rounded-lg border border-secondary-200 bg-secondary-50 p-4">
+        <input
+          type="checkbox"
+          id="privacy-consent"
+          checked={privacyConsent}
+          onChange={(e) => setPrivacyConsent(e.target.checked)}
+          className="mt-1 h-4 w-4 rounded border-secondary-300 text-primary-600 focus:ring-primary-600"
+        />
+        <label htmlFor="privacy-consent" className="text-sm text-secondary-700">
+          I consent to the processing of my personal data as described in the Privacy Policy. I agree to receive OTP and communication via SMS and WhatsApp.
+        </label>
+      </div>
+
+      <Button onClick={handleAction} loading={loading || sendingOtp} size="xl" fullWidth>
+        {otpSent ? 'Verify & Submit' : 'Send OTP & Submit'}
       </Button>
     </div>
   );

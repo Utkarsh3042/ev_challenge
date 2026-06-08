@@ -46,7 +46,7 @@ export class ApiClientError extends Error {
 type FetchOpts = {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   body?: unknown;
-  query?: Record<string, string | number | undefined | null>;
+  query?: Record<string, string | number | boolean | undefined | null>;
   headers?: Record<string, string>;
   signal?: AbortSignal;
   cache?: RequestCache;
@@ -134,6 +134,9 @@ export const api = {
   submitRider: (data: RiderSubmit) =>
     request<RiderSubmitResponse>('/api/riders/submit', { method: 'POST', body: data }),
 
+  sendOtp: (data: { phone: string }) =>
+    request<{ success: boolean }>('/api/riders/send-otp', { method: 'POST', body: data }),
+
   getScore: (phone: string) =>
     request<ScoreResponse>('/api/riders/score', { query: { phone } }),
 
@@ -166,6 +169,8 @@ export const api = {
     platform?: string;
     language?: string;
     segment?: string;
+    pin_code?: string;
+    follow_up_flag?: boolean;
     q?: string;
     page?: number;
     page_size?: number;
@@ -184,10 +189,13 @@ export const api = {
       query: { page, page_size },
     }),
 
-  getExportUrl: (params: { city?: string; vehicle?: string } = {}) => {
+  getExportUrl: (params: { city?: string; vehicle?: string; segment?: string; pin_code?: string; follow_up_flag?: boolean } = {}) => {
     const qs = new URLSearchParams();
     if (params.city) qs.set('city', params.city);
     if (params.vehicle) qs.set('vehicle', params.vehicle);
+    if (params.segment) qs.set('segment', params.segment);
+    if (params.pin_code) qs.set('pin_code', params.pin_code);
+    if (params.follow_up_flag !== undefined) qs.set('follow_up_flag', String(params.follow_up_flag));
     return `${BASE_URL}/api/admin/export${qs.size ? `?${qs.toString()}` : ''}`;
   },
 

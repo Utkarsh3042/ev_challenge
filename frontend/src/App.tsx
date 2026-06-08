@@ -10,6 +10,7 @@ import AdminRiders from './pages/admin/riders/page'
 import AdminLeads from './pages/admin/leads/page'
 import AdminLeaderboard from './pages/admin/leaderboard/page'
 import AdminMessages from './pages/admin/messages/page'
+import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
 
 function LangWrapper({ Component }: { Component: React.ComponentType<{ params: { lang: string } }> }) {
   const { lang } = useParams<{ lang: string }>()
@@ -25,7 +26,11 @@ export default function App() {
         {/* Public Routes with Lang */}
         <Route path="/:lang">
           <Route index element={<LandingPage />} />
-          <Route path="form" element={<FormPage />} />
+          <Route path="form" element={
+            <GoogleReCaptchaProvider reCaptchaKey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}>
+              <FormPage />
+            </GoogleReCaptchaProvider>
+          } />
           <Route path="form/success" element={<LangWrapper Component={SuccessPage} />} />
           <Route path="score" element={<ScorePage />} />
         </Route>

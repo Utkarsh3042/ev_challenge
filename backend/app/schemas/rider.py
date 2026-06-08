@@ -30,8 +30,10 @@ class RiderSubmit(BaseModel):
     phone: str = Field(
         min_length=10, max_length=15, description="Indian mobile, raw or E.164",
     )
+    pin_code: str = Field(min_length=6, max_length=6, default="000000")
     city: City
     platform: Platform
+    platforms: list[Platform] = Field(default_factory=list)
     years_experience: int = Field(ge=0, le=50)
     preferred_language: Language = "en"
 
@@ -59,6 +61,27 @@ class RiderSubmit(BaseModel):
 
     # Referral (optional)
     referred_by_code: str | None = Field(default=None, max_length=20)
+
+    # Security
+    recaptcha_token: str = Field(min_length=10)
+    website: str | None = Field(default=None, description="Honeypot field")
+    otp: str = Field(min_length=4, max_length=6, description="OTP code")
+
+class SendOTPRequest(BaseModel):
+    phone: str
+
+
+    @field_validator("phone")
+    @classmethod
+    def _validate_phone(cls, v: str) -> str:
+        import re
+        digits = re.sub(r"\D", "", v)
+        if len(digits) == 10 and not re.match(r"^[6-9]\d{9}$", digits):
+            raise ValueError("Invalid Indian mobile number")
+        # If it has country code, check the last 10 digits
+        if len(digits) > 10 and not re.match(r"^[6-9]\d{9}$", digits[-10:]):
+            raise ValueError("Invalid Indian mobile number")
+        return v
 
     @field_validator("top_challenges", "ev_challenges", "petrol_challenges",
                      "switch_motivators", "interested_in", mode="before")

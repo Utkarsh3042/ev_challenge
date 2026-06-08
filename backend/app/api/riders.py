@@ -5,10 +5,11 @@ from __future__ import annotations
 import logging
 import uuid
 
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, HTTPException, Query, status, Request
 from fastapi.responses import Response
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
+import httpx
 
 from app.api.deps import DbSession, DispatcherDep
 from app.config import settings
@@ -19,8 +20,15 @@ from app.schemas.rider import (
     RiderSubmit,
     RiderSubmitResponse,
     ScoreResponse,
+    SendOTPRequest,
 )
 from app.services.phone import format_display, normalize as phone_normalize, validate as phone_validate
+from app.services.sms import send_otp as send_sms_otp
+import random
+import time
+
+# Simple in-memory OTP store. For production use Redis.
+otp_store: dict[str, tuple[str, float]] = {}
 from app.services.qr_service import build_share_url, generate_qr_png
 from app.services.referral import (
     award_referral_bonus,
@@ -40,6 +48,24 @@ def _share_url_for(code: str) -> str:
     return build_share_url(code, settings.frontend_base_url)
 
 
+# ---------- POST /api/riders/send-otp --------------------------------------
+@router.post("/riders/send-otp", summary="Send an OTP to the rider's phone")
+async def send_otp_endpoint(req: SendOTPRequest):
+    try:
+        e164 = phone_normalize(req.phone)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid phone number")
+    
+    otp = str(random.randint(100000, 999999))
+    otp_store[e164] = (otp, time.time())
+    
+    success = await send_sms_otp(e164, otp)
+    if not success:
+        # Fallback for dev if fast2sms fails but we want to continue
+        logger.warning(f"Failed to send SMS to {e164}, OTP was {otp}")
+    
+    return {"success": True}
+
 # ---------- POST /api/riders/submit ----------------------------------------
 @router.post(
     "/riders/submit",
@@ -48,11 +74,39 @@ def _share_url_for(code: str) -> str:
     summary="Submit the survey and create a rider",
 )
 async def submit_rider(
+    request: Request,
     payload: RiderSubmit,
     db: DbSession,
     dispatcher: DispatcherDep,
 ) -> RiderSubmitResponse:
     """End-to-end submit flow (see PR #2 spec for the full diagram)."""
+    # 0) Security: Honeypot & reCAPTCHA
+    if payload.website:
+        logger.warning("Honeypot triggered for %s", payload.phone)
+        return RiderSubmitResponse(
+            success=True,
+            rider_id=uuid.uuid4(),
+            referral_code="FAKE123",
+            points=10,
+            segments=[],
+            whatsapp_sent=False,
+            whatsapp_preview="",
+            is_duplicate=False,
+        )
+
+    if settings.recaptcha_secret_key:
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(
+                "https://www.google.com/recaptcha/api/siteverify",
+                data={
+                    "secret": settings.recaptcha_secret_key,
+                    "response": payload.recaptcha_token,
+                },
+            )
+            data = resp.json()
+            if not data.get("success") or data.get("score", 0) < 0.5:
+                logger.warning("reCAPTCHA failed: %s", data)
+                raise HTTPException(status_code=400, detail="reCAPTCHA verification failed")
     # 1) Normalize & validate phone
     try:
         e164_phone = phone_normalize(payload.phone)
@@ -66,6 +120,17 @@ async def submit_rider(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={"code": "VALIDATION_ERROR", "message": "Invalid phone number", "field": "phone"},
         )
+
+    # 1.5) Validate OTP
+    stored_otp, timestamp = otp_store.get(e164_phone, (None, 0))
+    if not stored_otp or stored_otp != payload.otp:
+        # If no OTP in store, maybe it expired or was never sent
+        raise HTTPException(status_code=400, detail="Invalid or missing OTP")
+    if time.time() - timestamp > 600:
+        raise HTTPException(status_code=400, detail="OTP expired")
+    
+    # Clear OTP
+    del otp_store[e164_phone]
 
     # 2) Duplicate handling
     existing = await db.scalar(select(Rider).where(Rider.phone == e164_phone))

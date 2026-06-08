@@ -46,6 +46,8 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     jwt_expires_min: int = 60
     admin_bootstrap_token: str | None = None
+    recaptcha_secret_key: str = ""
+    fast2sms_api_key: str = ""
 
     # ---------- CORS ----------
     # ``NoDecode`` tells pydantic-settings NOT to JSON-parse this field;

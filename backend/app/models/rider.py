@@ -37,11 +37,14 @@ class Rider(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     full_name: Mapped[str] = mapped_column(String(100), nullable=False)
     phone: Mapped[str] = mapped_column(String(15), unique=True, nullable=False)
     city: Mapped[str] = mapped_column(String(50), nullable=False)
-    platform: Mapped[str] = mapped_column(String(20), nullable=False)
+    pin_code: Mapped[str] = mapped_column(String(10), nullable=False, default="000000", server_default="000000")
+    platform: Mapped[str] = mapped_column(String(20), nullable=False)  # Legacy
+    platforms: Mapped[list[str]] = mapped_column(ARRAY(Text), nullable=False, default=list, server_default="{}")
     years_experience: Mapped[int] = mapped_column(Integer, nullable=False)
     preferred_language: Mapped[str] = mapped_column(
         String(5), nullable=False, default="en", server_default="en"
     )
+    follow_up_flag: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
 
     # ---------- Vehicle ----------
     vehicle_type: Mapped[str] = mapped_column(String(20), nullable=False)

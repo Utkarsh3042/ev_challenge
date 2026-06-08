@@ -53,10 +53,12 @@ class RiderListItem(BaseModel):
     id: uuid.UUID
     full_name: str
     phone: str
+    pin_code: str
     city: str
     platform: str
     vehicle_type: str
     preferred_language: str
+    follow_up_flag: bool
     points: int
     referral_count: int
     referral_code: str

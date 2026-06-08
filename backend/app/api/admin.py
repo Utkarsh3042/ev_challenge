@@ -94,6 +94,8 @@ async def list_riders(
     platform: str | None = None,
     language: str | None = None,
     segment: str | None = None,
+    pin_code: str | None = None,
+    follow_up_flag: bool | None = None,
     q: str | None = Query(None, description="Search by name or phone"),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
@@ -109,6 +111,10 @@ async def list_riders(
         stmt = stmt.where(Rider.preferred_language == language)
     if segment:
         stmt = stmt.where(_segments_col.contains([segment]))
+    if pin_code:
+        stmt = stmt.where(Rider.pin_code == pin_code)
+    if follow_up_flag is not None:
+        stmt = stmt.where(Rider.follow_up_flag == follow_up_flag)
     if q:
         like = f"%{q}%"
         stmt = stmt.where(or_(Rider.full_name.ilike(like), Rider.phone.ilike(like)))
@@ -178,12 +184,20 @@ async def list_segment(
 async def export_riders(
     _: CurrentAdmin, db: DbSession,
     city: str | None = None, vehicle: str | None = None,
+    segment: str | None = None, pin_code: str | None = None,
+    follow_up_flag: bool | None = None,
 ) -> StreamingResponse:
     stmt = select(Rider).order_by(desc(Rider.created_at))
     if city:
         stmt = stmt.where(Rider.city == city)
     if vehicle:
         stmt = stmt.where(Rider.vehicle_type == vehicle)
+    if segment:
+        stmt = stmt.where(_segments_col.contains([segment]))
+    if pin_code:
+        stmt = stmt.where(Rider.pin_code == pin_code)
+    if follow_up_flag is not None:
+        stmt = stmt.where(Rider.follow_up_flag == follow_up_flag)
     rows = (await db.execute(stmt)).scalars().all()
     filename = f"riders_{datetime.now(tz=timezone.utc):%Y%m%d_%H%M%S}.csv"
     return StreamingResponse(

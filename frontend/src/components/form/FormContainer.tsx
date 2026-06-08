@@ -19,6 +19,7 @@ import { StickyNextButton } from './StickyNextButton';
 import { ReviewSubmit } from './ReviewSubmit';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { useToast } from '@/components/ui/toast';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 const TOTAL_SECTIONS = 6;
 
@@ -40,6 +41,8 @@ export function FormContainer({ locale }: { locale: string }) {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [showConfirmReset, setShowConfirmReset] = useState(false);
+  const { executeRecaptcha } = useGoogleReCaptcha();
+  const [honeypot, setHoneypot] = useState('');
 
   // On first mount, prompt to resume saved state
   useEffect(() => {
@@ -70,8 +73,9 @@ export function FormContainer({ locale }: { locale: string }) {
       const a = state.sectionA;
       if (!a.full_name || a.full_name.trim().length < 2) fail('sectionA', 'full_name', tVal('fullNameRequired'));
       if (!a.phone || !isValidIndianPhone(a.phone)) fail('sectionA', 'phone', tVal('phoneRequired'));
+      if (!a.pin_code || a.pin_code.length !== 6) fail('sectionA', 'pin_code', 'Please enter a valid 6-digit PIN code');
       if (!a.city) fail('sectionA', 'city', tVal('cityRequired'));
-      if (!a.platform) fail('sectionA', 'platform', tVal('platformRequired'));
+      if (!a.platforms || a.platforms.length === 0) fail('sectionA', 'platforms', 'Please select at least one platform');
     } else if (idx === 1) {
       const b = state.sectionB;
       if (!b.vehicle_type) fail('sectionB', 'vehicle_type', tVal('vehicleRequired'));
@@ -125,11 +129,15 @@ export function FormContainer({ locale }: { locale: string }) {
     setSection(TOTAL_SECTIONS);
   }
 
-  async function handleSubmit() {
+  async function handleSubmit(otp: string) {
     setSubmitting(true);
     setSubmitError(null);
     try {
-      const payload = buildSubmitPayload(state);
+      if (!executeRecaptcha) {
+        throw new Error('reCAPTCHA not ready');
+      }
+      const recaptcha_token = await executeRecaptcha('form_submit');
+      const payload = buildSubmitPayload(state, recaptcha_token, honeypot, otp);
       const res: RiderSubmitResponse = await api.submitRider(payload);
       clearFormState();
       reset();
@@ -179,7 +187,7 @@ export function FormContainer({ locale }: { locale: string }) {
           setShowResume(false);
           reset();
           setAll({
-            sectionA: { full_name: '', phone: '', city: '', platform: '', years_experience: '', preferred_language: '' },
+            sectionA: { full_name: '', phone: '', pin_code: '', city: '', platform: '', platforms: [], years_experience: '', preferred_language: '' },
             sectionB: { vehicle_type: '', vehicle_brand_model: '', fuel_method: '', weekly_expense: '', monthly_maintenance: '' },
             sectionC: { top_challenges: [], ev_challenges: [], petrol_challenges: [], other_challenge: '' },
             sectionD: { has_accident_insurance: '', has_health_insurance: '', paid_out_of_pocket: null },
@@ -199,7 +207,7 @@ export function FormContainer({ locale }: { locale: string }) {
           setShowConfirmReset(false);
           reset();
           setAll({
-            sectionA: { full_name: '', phone: '', city: '', platform: '', years_experience: '', preferred_language: '' },
+            sectionA: { full_name: '', phone: '', pin_code: '', city: '', platform: '', platforms: [], years_experience: '', preferred_language: '' },
             sectionB: { vehicle_type: '', vehicle_brand_model: '', fuel_method: '', weekly_expense: '', monthly_maintenance: '' },
             sectionC: { top_challenges: [], ev_challenges: [], petrol_challenges: [], other_challenge: '' },
             sectionD: { has_accident_insurance: '', has_health_insurance: '', paid_out_of_pocket: null },
@@ -254,11 +262,21 @@ export function FormContainer({ locale }: { locale: string }) {
           nextLabel={section === TOTAL_SECTIONS - 1 ? t('submit') : sectionLabels[section]}
         />
       ) : null}
+
+      <input
+        type="text"
+        name="website"
+        tabIndex={-1}
+        autoComplete="off"
+        className="sr-only"
+        value={honeypot}
+        onChange={(e) => setHoneypot(e.target.value)}
+      />
     </div>
   );
 }
 
-function buildSubmitPayload(state: FormState): RiderSubmit {
+function buildSubmitPayload(state: FormState, recaptcha_token: string, website: string, otp: string): RiderSubmit {
   const a = state.sectionA;
   const b = state.sectionB;
   const c = state.sectionC;
@@ -268,8 +286,10 @@ function buildSubmitPayload(state: FormState): RiderSubmit {
   return {
     full_name: a.full_name.trim(),
     phone: a.phone ? normalizeIndianPhone(a.phone) : '',
+    pin_code: a.pin_code || '000000',
     city: a.city as RiderSubmit['city'],
-    platform: a.platform as RiderSubmit['platform'],
+    platform: (a.platforms[0] || 'other') as RiderSubmit['platform'],
+    platforms: a.platforms,
     years_experience: a.years_experience ? Number(a.years_experience) : 0,
     preferred_language: (a.preferred_language || 'en') as RiderSubmit['preferred_language'],
     vehicle_type: b.vehicle_type as RiderSubmit['vehicle_type'],
@@ -287,5 +307,8 @@ function buildSubmitPayload(state: FormState): RiderSubmit {
     switch_motivators: e.switch_motivators,
     interested_in: e.interested_in,
     referred_by_code: f.referred && f.referral_code.trim() ? f.referral_code.trim().toUpperCase() : null,
+    recaptcha_token,
+    website: website || null,
+    otp,
   };
 }

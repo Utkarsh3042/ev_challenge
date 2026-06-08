@@ -3,6 +3,7 @@
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { useEffect, useState, Suspense } from 'react'
+import { MessageCircle } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ReferralDisplay } from '@/components/share/ReferralDisplay'
@@ -49,6 +50,19 @@ function SuccessContent({ lang }: { lang: string }) {
           <div className="mt-1 flex items-center justify-center gap-2">
             <span className="text-3xl font-bold tracking-wider text-primary-600">{code}</span>
           </div>
+          {import.meta.env.VITE_TELEGRAM_BOT_URL && (
+            <div className="mt-4">
+              <a
+                href={import.meta.env.VITE_TELEGRAM_BOT_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#0088cc]/20 bg-[#0088cc]/10 px-5 py-3 text-sm font-bold text-[#0088cc] shadow-sm transition-all hover:bg-[#0088cc]/20 focus:outline-none focus:ring-2 focus:ring-[#0088cc] focus:ring-offset-2"
+              >
+                <MessageCircle className="h-5 w-5" />
+                Join our Telegram Bot
+              </a>
+            </div>
+          )}
         </div>
         
         {code && (

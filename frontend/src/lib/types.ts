@@ -29,8 +29,10 @@ export type RiderSource = 'web' | 'whatsapp';
 export interface RiderSubmit {
   full_name: string;
   phone: string;
+  pin_code: string;
   city: City;
-  platform: Platform;
+  platform: Platform; // Legacy
+  platforms: Platform[];
   years_experience: number;
   preferred_language: Locale;
   vehicle_type: VehicleType;
@@ -48,6 +50,13 @@ export interface RiderSubmit {
   switch_motivators: string[];
   interested_in: string[];
   referred_by_code?: string | null;
+  recaptcha_token: string;
+  website?: string | null;
+  otp: string;
+}
+
+export interface SendOTPRequest {
+  phone: string;
 }
 
 export interface MilestoneProgress {
@@ -110,10 +119,12 @@ export interface RiderListItem {
   id: string;
   full_name: string;
   phone: string;
+  pin_code: string;
   city: string;
   platform: string;
   vehicle_type: string;
   preferred_language: string;
+  follow_up_flag: boolean;
   points: number;
   referral_count: number;
   referral_code: string;
@@ -201,8 +212,10 @@ export interface FormState {
   sectionA: {
     full_name: string;
     phone: string;
+    pin_code: string;
     city: City | '';
-    platform: Platform | '';
+    platform: Platform | ''; // Legacy single
+    platforms: Platform[];
     years_experience: string;
     preferred_language: Locale | '';
   };

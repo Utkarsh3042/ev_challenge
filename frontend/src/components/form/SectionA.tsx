@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Input, Select } from '@/components/ui/input';
-import { RadioCardGroup } from '@/components/ui/radio-group';
+import { cn } from '@/lib/utils';
 import { CITIES, LOCALES, PLATFORMS } from '@/lib/constants';
 import { cityLocale } from '@/lib/locales';
 import { isValidIndianPhone, normalizeIndianPhone } from '@/lib/utils';
@@ -89,6 +89,20 @@ export function SectionA({ value, onChange, errors }: Props) {
         maxLength={10}
       />
 
+      <Input
+        label="PIN Code"
+        type="text"
+        inputMode="numeric"
+        placeholder="Enter 6-digit PIN code"
+        value={value.pin_code || ''}
+        onChange={(e) => {
+          const digits = e.target.value.replace(/\D/g, '').slice(0, 6);
+          onChange({ pin_code: digits });
+        }}
+        error={errors.pin_code ?? null}
+        maxLength={6}
+      />
+
       <Select
         label={t('city')}
         value={value.city}
@@ -113,14 +127,33 @@ export function SectionA({ value, onChange, errors }: Props) {
 
       <div>
         <p className="mb-2 text-sm font-medium text-secondary-900">{t('platform')}</p>
-        <RadioCardGroup
-          name="platform"
-          value={value.platform || null}
-          onChange={(v) => onChange({ platform: v as FormState['sectionA']['platform'] })}
-          options={platformOptions}
-          columns={2}
-          error={errors.platform ?? null}
-        />
+        <div className="grid grid-cols-2 gap-3">
+          {platformOptions.map((opt) => {
+            const isSelected = value.platforms?.includes(opt.value as any) ?? false;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => {
+                  const current = value.platforms || [];
+                  const updated = isSelected
+                    ? current.filter((p) => p !== opt.value)
+                    : [...current, opt.value];
+                  onChange({ platforms: updated as any, platform: updated[0] as any });
+                }}
+                className={cn(
+                  'flex cursor-pointer items-center justify-center rounded-xl border p-3 text-sm font-semibold transition-all hover:bg-secondary-50',
+                  isSelected
+                    ? 'border-primary-600 bg-primary-50 text-primary-700 shadow-sm'
+                    : 'border-secondary-200 bg-white text-secondary-700'
+                )}
+              >
+                {opt.label}
+              </button>
+            );
+          })}
+        </div>
+        {errors.platforms && <p className="mt-1 text-xs text-danger-600">{errors.platforms}</p>}
       </div>
 
       <div className="grid grid-cols-2 gap-3">
