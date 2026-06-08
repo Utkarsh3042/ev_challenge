@@ -105,14 +105,25 @@ async function request<T>(path: string, opts: FetchOpts = {}): Promise<T> {
   }
 
   if (!res.ok) {
-    const errPayload =
-      data && typeof data === 'object' && 'error' in (data as object)
-        ? ((data as { error: ApiError }).error)
-        : null;
-    const message =
-      errPayload?.message ||
-      (typeof data === 'string' && data) ||
-      `Request failed with status ${res.status}`;
+    let errPayload = null;
+    let message = `Request failed with status ${res.status}`;
+
+    if (data && typeof data === 'object') {
+      if ('error' in data) {
+        errPayload = (data as { error: ApiError }).error;
+        message = errPayload.message;
+      } else if ('detail' in data) {
+        // FastAPI default error format
+        const detail = (data as any).detail;
+        if (typeof detail === 'string') {
+          message = detail;
+        } else if (Array.isArray(detail)) {
+          message = detail.map((d) => d.msg || d.type).join(', ');
+        }
+      }
+    } else if (typeof data === 'string' && data) {
+      message = data;
+    }
       
     if (res.status === 422 && typeof window !== 'undefined') {
       console.error('Validation Error Details:', data);

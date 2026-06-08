@@ -149,11 +149,12 @@ export function FormContainer({ locale }: { locale: string }) {
       }
       const params = new URLSearchParams({ code: res.referral_code, name: state.sectionA.full_name });
       navigate(`/${locale}/form/success?${params.toString()}`);
-    } catch (err) {
-      if (err instanceof ApiClientError) {
+    } catch (err: any) {
+      console.error("Submit Error:", err);
+      if (err?.name === 'ApiClientError' || err instanceof ApiClientError) {
         setSubmitError(err.payload?.message || err.message);
       } else {
-        setSubmitError('Network error — please try again.');
+        setSubmitError(err.message || 'Network error — please try again.');
       }
     } finally {
       setSubmitting(false);
