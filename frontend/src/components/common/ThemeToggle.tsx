@@ -16,7 +16,7 @@ export function ThemeToggle({ className = '' }: ThemeToggleProps) {
       className={`relative inline-flex h-9 w-9 items-center justify-center rounded-full border transition-all duration-200 ${
         isDark
           ? 'border-white/20 bg-white/10 text-yellow-300 hover:bg-white/20'
-          : 'border-secondary-200 bg-white text-secondary-600 hover:bg-secondary-50 shadow-sm'
+          : 'border-secondary-200 bg-white text-secondary-900 hover:bg-secondary-50 shadow-sm'
       } ${className}`}
     >
       {isDark ? (
