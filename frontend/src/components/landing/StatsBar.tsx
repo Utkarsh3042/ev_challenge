@@ -11,10 +11,11 @@ export function StatsBar() {
   const { data, loading, error } = useApi(() => api.getMetaSummary(), []);
 
   return (
-    <section className="-mt-10 px-4 sm:px-6">
+    <section className="mt-4 px-4 sm:px-6">
       <div className="mx-auto grid max-w-3xl grid-cols-3 gap-2 rounded-2xl bg-white p-4 shadow-card sm:gap-4 sm:p-6">
         <Stat
-          icon={<Users className="h-5 w-5 text-primary-500" />}
+          icon={<Users className="h-5 w-5 text-white" />}
+          iconBg="bg-primary-500"
           label={t('ridersLabel')}
           value={
             loading
@@ -25,7 +26,8 @@ export function StatsBar() {
           }
         />
         <Stat
-          icon={<Award className="h-5 w-5 text-primary-500" />}
+          icon={<Award className="h-5 w-5 text-white" />}
+          iconBg="bg-amber-500"
           label={t('pointsLabel')}
           value={
             loading
@@ -36,7 +38,8 @@ export function StatsBar() {
           }
         />
         <Stat
-          icon={<Flame className="h-5 w-5 text-primary-500" />}
+          icon={<Flame className="h-5 w-5 text-white" />}
+          iconBg="bg-rose-500"
           label={t('liveLabel')}
           value={t('liveValue')}
           small
@@ -53,18 +56,20 @@ export function StatsBar() {
 
 function Stat({
   icon,
+  iconBg,
   label,
   value,
   small,
 }: {
   icon: React.ReactNode;
+  iconBg: string;
   label: string;
   value: string;
   small?: boolean;
 }) {
   return (
     <div className="text-center">
-      <div className="mx-auto grid h-8 w-8 place-items-center rounded-full bg-primary-50">
+      <div className={`mx-auto grid h-10 w-10 place-items-center rounded-full shadow-sm ${iconBg}`}>
         {icon}
       </div>
       <p
