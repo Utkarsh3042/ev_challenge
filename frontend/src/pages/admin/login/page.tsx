@@ -6,7 +6,6 @@ import { api } from '../../../lib/api'
 import { Input } from '../../../components/ui/input'
 import { Button } from '../../../components/ui/button'
 import { Card } from '../../../components/ui/card'
-import { ErrorState } from '../../../components/common/ErrorState'
 import { LoadingSpinner } from '../../../components/common/LoadingSpinner'
 
 export default function AdminLoginPage() {
