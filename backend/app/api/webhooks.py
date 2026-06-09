@@ -22,7 +22,7 @@ from app.models.whatsapp import WhatsAppMessage
 from app.schemas.whatsapp import WebhookAck
 from app.services.phone import normalize
 from app.services.whatsapp_chatbot import process_message
-from app.services.telegram_bot import bot_app
+from app.services import telegram_bot
 from telegram import Update
 from app.config import settings
 
@@ -88,10 +88,10 @@ async def whatsapp_webhook(
 @router.get("/webhooks/telegram/ping")
 async def telegram_ping(chat_id: int):
     """Diagnostic endpoint to force a message send."""
-    if not bot_app:
+    if not telegram_bot.bot_app:
         return {"error": "bot not initialized"}
     try:
-        await bot_app.bot.send_message(chat_id=chat_id, text="Ping from Render!")
+        await telegram_bot.bot_app.bot.send_message(chat_id=chat_id, text="Ping from Render!")
         return {"status": "ok"}
     except Exception as e:
         return {"error": str(e)}
@@ -102,7 +102,7 @@ async def telegram_ping(chat_id: int):
 )
 async def telegram_webhook(request: Request) -> dict[str, str]:
     """Accept incoming Telegram updates and route to python-telegram-bot."""
-    if not bot_app:
+    if not telegram_bot.bot_app:
         return {"status": "error", "message": "Bot not initialized"}
 
     # Verify secret token if configured
@@ -114,8 +114,8 @@ async def telegram_webhook(request: Request) -> dict[str, str]:
 
     try:
         data = await request.json()
-        update = Update.de_json(data=data, bot=bot_app.bot)
-        await bot_app.process_update(update)
+        update = Update.de_json(data=data, bot=telegram_bot.bot_app.bot)
+        await telegram_bot.bot_app.process_update(update)
     except Exception as exc:
         logger.exception("Telegram webhook failed: %s", exc)
         
