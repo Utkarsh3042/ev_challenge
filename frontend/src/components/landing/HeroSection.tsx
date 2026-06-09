@@ -74,7 +74,7 @@ export function HeroSection() {
       {/* Decorative bottom wave — color matches body bg */}
       <svg
         className={`absolute inset-x-0 bottom-0 h-12 w-full transition-colors duration-300 ${
-          isDark ? 'text-gray-950' : 'text-canvas'
+          isDark ? 'text-[#0d1117]' : 'text-canvas'
         }`}
         viewBox="0 0 1440 80"
         preserveAspectRatio="none"
