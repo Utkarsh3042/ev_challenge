@@ -51,7 +51,7 @@ async def login(payload: AdminLoginRequest, db: DbSession) -> Response:
     await db.commit()
 
     body = AdminLoginResponse(
-        success=True, admin_id=admin.id, email=admin.email,
+        success=True, admin_id=admin.id, email=admin.email, token=token,
     ).model_dump(mode="json")
     resp = Response(content=json.dumps(body), media_type="application/json")
     resp.set_cookie(

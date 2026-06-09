@@ -18,6 +18,7 @@ class AdminLoginResponse(BaseModel):
     success: bool = True
     admin_id: uuid.UUID
     email: EmailStr
+    token: str | None = None  # Returned for cross-origin Bearer auth
 
 
 class AdminMeResponse(BaseModel):

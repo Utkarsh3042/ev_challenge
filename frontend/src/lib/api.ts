@@ -78,7 +78,12 @@ async function request<T>(path: string, opts: FetchOpts = {}): Promise<T> {
   if (body != null) {
     init.body = typeof body === 'string' ? body : JSON.stringify(body);
   }
-  // Forward cookies for admin auth in both client and server fetches
+  // Inject Bearer token if stored (cross-origin admin auth)
+  const storedToken = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
+  if (storedToken) {
+    (init.headers as Record<string, string>)['Authorization'] = `Bearer ${storedToken}`;
+  }
+  // Also include cookies as fallback for same-origin setups
   (init as RequestInit & { credentials?: RequestCredentials }).credentials = 'include';
 
   let res: Response;
@@ -165,12 +170,21 @@ export const api = {
     request<MetaSummary>('/api/meta/stats/summary', { next: { revalidate: 60 } }),
 
   /* Admin */
-  adminLogin: (email: string, password: string) =>
-    request<{ success: boolean; admin_id: string; email: string }>('/api/admin/login', {
+  adminLogin: async (email: string, password: string) => {
+    const res = await request<{ success: boolean; admin_id: string; email: string; token?: string }>('/api/admin/login', {
       method: 'POST',
       body: { email, password },
-    }),
-  adminLogout: () => request<{ success: boolean }>('/api/admin/logout', { method: 'POST' }),
+    });
+    // Store JWT for cross-origin Bearer auth
+    if (res.token && typeof window !== 'undefined') {
+      localStorage.setItem('admin_token', res.token);
+    }
+    return res;
+  },
+  adminLogout: () => {
+    if (typeof window !== 'undefined') localStorage.removeItem('admin_token');
+    return request<{ success: boolean }>('/api/admin/logout', { method: 'POST' });
+  },
   adminMe: () => request<{ admin_id: string; email: string }>('/api/admin/me'),
 
   getStats: () => request<StatsResponse>('/api/admin/stats'),
