@@ -111,7 +111,10 @@ export function FormContainer({ locale }: { locale: string }) {
   }
 
   function goBack() {
-    if (section <= 0) return;
+    if (section === 0) {
+      navigate(`/${locale}`);
+      return;
+    }
     setErrors({});
     setSection((s) => Math.max(s - 1, 0));
   }
@@ -220,16 +223,16 @@ export function FormContainer({ locale }: { locale: string }) {
         onCancel={() => setShowConfirmReset(false)}
       />
 
-      <div className="bg-white">
+      <div className="bg-white dark:bg-gray-900 border-b border-secondary-100 dark:border-gray-700">
         <ProgressBar current={Math.min(section + 1, TOTAL_SECTIONS)} total={TOTAL_SECTIONS} />
         {hasSavedBefore ? (
           <div className="px-4 pb-1 sm:px-6">
             <button
               type="button"
               onClick={() => setShowConfirmReset(true)}
-              className="text-[11px] text-secondary-500 underline-offset-2 hover:underline"
+              className="text-[11px] text-secondary-500 dark:text-gray-400 underline-offset-2 hover:underline"
             >
-              Clear & start over
+              Clear &amp; start over
             </button>
           </div>
         ) : null}
@@ -257,7 +260,7 @@ export function FormContainer({ locale }: { locale: string }) {
 
       {!isReview ? (
         <StickyNextButton
-          canBack={section > 0}
+          canBack={true}
           onBack={goBack}
           onNext={section === TOTAL_SECTIONS - 1 ? gotoReview : goNext}
           nextLabel={section === TOTAL_SECTIONS - 1 ? t('submit') : sectionLabels[section]}

@@ -3,7 +3,7 @@
 import { Menu } from 'lucide-react'
 import { useState } from 'react'
 import { Drawer } from '../ui/drawer'
-
+import { ThemeToggle } from '../common/ThemeToggle'
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
@@ -34,8 +34,8 @@ export function TopBar() {
           </button>
           <h2 className="text-lg font-semibold text-secondary-900">{title}</h2>
         </div>
-        <div className="flex items-center gap-4">
-          {/* Add admin profile / actions here if needed */}
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
         </div>
       </header>
 

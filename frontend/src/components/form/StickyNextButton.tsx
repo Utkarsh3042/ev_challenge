@@ -25,7 +25,7 @@ export function StickyNextButton({
 }: Props) {
   const { t } = useTranslation('common');
   return (
-    <div className="sticky bottom-0 left-0 right-0 z-10 -mx-4 border-t border-secondary-100 bg-white/95 px-4 pt-3 pb-4 backdrop-blur supports-[backdrop-filter]:bg-white/80 sm:-mx-6 sm:px-6">
+    <div className="sticky bottom-0 left-0 right-0 z-10 -mx-4 border-t border-secondary-100 bg-white/95 px-4 pt-3 pb-4 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:border-gray-700 dark:bg-gray-900/95 dark:supports-[backdrop-filter]:bg-gray-900/85 sm:-mx-6 sm:px-6">
       <div className="mx-auto flex max-w-3xl items-center gap-2">
         <Button
           variant="outline"

@@ -50,43 +50,48 @@ export default function AdminOverview() {
         </div>
       </div>
 
-      {/* Top KPIs */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         <KPICard 
           title="Total Riders" 
           value={stats.total_riders.toLocaleString()} 
           icon={Users} 
-          gradientFrom="from-blue-50" gradientTo="to-white" iconColor="text-blue-500"
+          gradientFrom="from-blue-50" gradientTo="to-white" gradientFromDark="from-blue-950/60"
+          iconColor="text-blue-500"
         />
         <KPICard 
           title="Points Awarded" 
           value={stats.total_points_awarded.toLocaleString()} 
           icon={Zap} 
-          gradientFrom="from-amber-50" gradientTo="to-white" iconColor="text-amber-500"
+          gradientFrom="from-amber-50" gradientTo="to-white" gradientFromDark="from-amber-950/60"
+          iconColor="text-amber-500"
         />
         <KPICard 
           title="Active Referrers" 
           value={stats.active_referrers.toLocaleString()} 
           icon={UserPlus} 
-          gradientFrom="from-emerald-50" gradientTo="to-white" iconColor="text-emerald-500"
+          gradientFrom="from-emerald-50" gradientTo="to-white" gradientFromDark="from-emerald-950/60"
+          iconColor="text-emerald-500"
         />
         <KPICard 
           title="Hot EV Leads" 
           value={stats.hot_ev_leads.toLocaleString()} 
           icon={BatteryCharging} 
-          gradientFrom="from-purple-50" gradientTo="to-white" iconColor="text-purple-500"
+          gradientFrom="from-purple-50" gradientTo="to-white" gradientFromDark="from-purple-950/60"
+          iconColor="text-purple-500"
         />
         <KPICard 
           title="Insurance Leads" 
           value={stats.insurance_leads.toLocaleString()} 
           icon={FileText} 
-          gradientFrom="from-pink-50" gradientTo="to-white" iconColor="text-pink-500"
+          gradientFrom="from-pink-50" gradientTo="to-white" gradientFromDark="from-pink-950/60"
+          iconColor="text-pink-500"
         />
         <KPICard 
           title="Retrofit Leads" 
           value={stats.retrofit_leads.toLocaleString()} 
           icon={Wrench} 
-          gradientFrom="from-teal-50" gradientTo="to-white" iconColor="text-teal-500"
+          gradientFrom="from-teal-50" gradientTo="to-white" gradientFromDark="from-teal-950/60"
+          iconColor="text-teal-500"
         />
       </div>
 

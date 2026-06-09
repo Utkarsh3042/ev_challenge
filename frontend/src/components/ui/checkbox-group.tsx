@@ -34,7 +34,7 @@ export function CheckboxGroup({
   return (
     <div>
       {max != null ? (
-        <div className="mb-2 text-xs font-medium text-secondary-500">
+        <div className="mb-2 text-xs font-medium text-secondary-500 dark:text-gray-400">
           {values.length}/{max} {emptyHint ?? 'selected'}
         </div>
       ) : null}
@@ -55,8 +55,8 @@ export function CheckboxGroup({
               className={cn(
                 'flex min-h-[44px] cursor-pointer items-center gap-2 rounded-xl border p-3 text-left text-sm transition-colors tap-highlight',
                 checked
-                  ? 'border-primary-500 bg-primary-50 text-secondary-900'
-                  : 'border-secondary-200 bg-white text-secondary-900 hover:border-primary-300',
+                  ? 'border-primary-500 bg-primary-50 text-secondary-900 dark:bg-primary-900/30 dark:text-gray-100 dark:border-primary-400'
+                  : 'border-secondary-200 bg-white text-secondary-900 hover:border-primary-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 dark:hover:border-primary-500',
                 disabledThis && 'cursor-not-allowed opacity-60',
               )}
             >
@@ -79,7 +79,7 @@ export function CheckboxGroup({
                   'grid h-5 w-5 shrink-0 place-items-center rounded-md border-2',
                   checked
                     ? 'border-primary-500 bg-primary-500 text-white'
-                    : 'border-secondary-300',
+                    : 'border-secondary-300 dark:border-gray-500',
                 )}
                 aria-hidden="true"
               >

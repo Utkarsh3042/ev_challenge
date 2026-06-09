@@ -123,9 +123,9 @@ export function ReviewSubmit({ state, onEdit, onSubmit, loading, error }: Props)
       </header>
       <div className="space-y-3">
         {rows.map((sec, i) => (
-          <section key={sec.title} className="rounded-2xl border border-secondary-100 bg-white p-4 shadow-card">
+          <section key={sec.title} className="rounded-2xl border border-secondary-100 bg-white p-4 shadow-card dark:bg-gray-800 dark:border-gray-700">
             <div className="mb-2 flex items-center justify-between">
-              <h3 className="text-sm font-bold text-secondary-900">{sec.title}</h3>
+              <h3 className="text-sm font-bold text-secondary-900 dark:text-gray-100">{sec.title}</h3>
               <button
                 type="button"
                 onClick={() => onEdit(i)}
@@ -138,8 +138,8 @@ export function ReviewSubmit({ state, onEdit, onSubmit, loading, error }: Props)
             <dl className="grid grid-cols-1 gap-1.5 text-sm sm:grid-cols-2 sm:gap-x-4">
               {sec.rows.map((r) => (
                 <div key={r.label} className="flex flex-col">
-                  <dt className="text-[11px] font-medium uppercase tracking-wide text-secondary-500">{r.label}</dt>
-                  <dd className="text-secondary-900">{r.value}</dd>
+                  <dt className="text-[11px] font-medium uppercase tracking-wide text-secondary-500 dark:text-gray-400">{r.label}</dt>
+                  <dd className="text-secondary-900 dark:text-gray-200">{r.value}</dd>
                 </div>
               ))}
             </dl>
@@ -153,8 +153,8 @@ export function ReviewSubmit({ state, onEdit, onSubmit, loading, error }: Props)
       ) : null}
       
       {otpSent && (
-        <div className="rounded-2xl border border-primary-200 bg-primary-50 p-4">
-          <label className="mb-2 flex items-center gap-2 text-sm font-bold text-primary-900">
+        <div className="rounded-2xl border border-primary-200 bg-primary-50 p-4 dark:bg-primary-900/20 dark:border-primary-700">
+          <label className="mb-2 flex items-center gap-2 text-sm font-bold text-primary-900 dark:text-primary-300">
             <ShieldCheck className="h-4 w-4" />
             Enter OTP sent to +91 {state.sectionA.phone}
           </label>
@@ -163,13 +163,13 @@ export function ReviewSubmit({ state, onEdit, onSubmit, loading, error }: Props)
             maxLength={6}
             value={otpValue}
             onChange={(e) => setOtpValue(e.target.value.replace(/\D/g, ''))}
-            className="w-full rounded-xl border border-primary-300 bg-white px-4 py-3 text-center text-xl font-bold tracking-widest outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+            className="w-full rounded-xl border border-primary-300 bg-white px-4 py-3 text-center text-xl font-bold tracking-widest outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:bg-gray-800 dark:border-primary-600 dark:text-white"
             placeholder="••••••"
           />
         </div>
       )}
 
-      <div className="flex items-start gap-3 rounded-lg border border-secondary-200 bg-secondary-50 p-4">
+      <div className="flex items-start gap-3 rounded-lg border border-secondary-200 bg-secondary-50 p-4 dark:bg-gray-800 dark:border-gray-700">
         <input
           type="checkbox"
           id="privacy-consent"
@@ -177,7 +177,7 @@ export function ReviewSubmit({ state, onEdit, onSubmit, loading, error }: Props)
           onChange={(e) => setPrivacyConsent(e.target.checked)}
           className="mt-1 h-4 w-4 rounded border-secondary-300 text-primary-600 focus:ring-primary-600"
         />
-        <label htmlFor="privacy-consent" className="text-sm text-secondary-700">
+        <label htmlFor="privacy-consent" className="text-sm text-secondary-700 dark:text-gray-300">
           I consent to the processing of my personal data as described in the Privacy Policy. I agree to receive OTP and communication via SMS and WhatsApp.
         </label>
       </div>

@@ -53,8 +53,8 @@ export function RadioCardGroup({
               baseClasses,
               'cursor-pointer',
               selected
-                ? 'border-primary-500 bg-primary-50 ring-2 ring-primary-500/30'
-                : 'border-secondary-200 bg-white hover:border-primary-300',
+                ? 'border-primary-500 bg-primary-50 ring-2 ring-primary-500/30 dark:bg-primary-900/30 dark:border-primary-400'
+                : 'border-secondary-200 bg-white hover:border-primary-300 dark:bg-gray-800 dark:border-gray-600 dark:hover:border-primary-500',
               disabled && 'cursor-not-allowed opacity-60',
             )}
           >
@@ -73,11 +73,11 @@ export function RadioCardGroup({
               </span>
             ) : null}
             <span className="min-w-0 flex-1">
-              <span className="block text-sm font-semibold text-secondary-900">
+              <span className="block text-sm font-semibold text-secondary-900 dark:text-gray-100">
                 {opt.label}
               </span>
               {opt.description ? (
-                <span className="block text-xs text-secondary-500">
+                <span className="block text-xs text-secondary-500 dark:text-gray-400">
                   {opt.description}
                 </span>
               ) : null}
@@ -85,7 +85,7 @@ export function RadioCardGroup({
             <span
               className={cn(
                 'grid h-5 w-5 shrink-0 place-items-center rounded-full border-2',
-                selected ? 'border-primary-500 bg-primary-500' : 'border-secondary-300',
+                selected ? 'border-primary-500 bg-primary-500' : 'border-secondary-300 dark:border-gray-500',
               )}
               aria-hidden="true"
             >
@@ -120,7 +120,7 @@ export function RadioInlineGroup({
                 'inline-flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors tap-highlight',
                 selected
                   ? 'border-primary-500 bg-primary-500 text-white'
-                  : 'border-secondary-200 bg-white text-secondary-900 hover:border-primary-300',
+                  : 'border-secondary-200 bg-white text-secondary-900 hover:border-primary-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 dark:hover:border-primary-400',
                 disabled && 'cursor-not-allowed opacity-60',
               )}
             >

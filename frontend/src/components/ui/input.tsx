@@ -36,7 +36,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label ? (
           <label
             htmlFor={inputId}
-            className="mb-1.5 block text-sm font-medium text-secondary-900"
+            className="mb-1.5 block text-sm font-medium text-secondary-900 dark:text-gray-200"
           >
             {label}
           </label>
@@ -44,6 +44,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <div
           className={cn(
             'flex h-12 w-full items-center rounded-xl border bg-white px-3 transition-colors',
+            'dark:bg-gray-800 dark:border-gray-600',
             'focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/20',
             error
               ? 'border-danger-500 focus-within:border-danger-500 focus-within:ring-danger-500/20'
@@ -52,7 +53,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           )}
         >
           {prefix ? (
-            <span className="mr-2 shrink-0 text-secondary-500">{prefix}</span>
+            <span className="mr-2 shrink-0 text-secondary-500 dark:text-gray-400">{prefix}</span>
           ) : null}
           <input
             ref={ref}
@@ -61,7 +62,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             inputMode={
               inputMode ?? (type === 'number' ? 'numeric' : type === 'tel' ? 'tel' : undefined)
             }
-            className="h-full w-full min-w-0 flex-1 bg-transparent text-base text-secondary-900 placeholder:text-secondary-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-full w-full min-w-0 flex-1 bg-transparent text-base text-secondary-900 placeholder:text-secondary-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60 dark:text-gray-100 dark:placeholder:text-gray-500"
             aria-invalid={!!error}
             aria-describedby={
               error ? `${inputId}-error` : hint ? `${inputId}-hint` : undefined
@@ -74,7 +75,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {error}
           </p>
         ) : hint ? (
-          <p id={`${inputId}-hint`} className="mt-1 text-xs text-secondary-500">
+          <p id={`${inputId}-hint`} className="mt-1 text-xs text-secondary-500 dark:text-gray-400">
             {hint}
           </p>
         ) : null}
@@ -104,7 +105,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         {label ? (
           <label
             htmlFor={selectId}
-            className="mb-1.5 block text-sm font-medium text-secondary-900"
+            className="mb-1.5 block text-sm font-medium text-secondary-900 dark:text-gray-200"
           >
             {label}
           </label>
@@ -112,6 +113,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         <div
           className={cn(
             'flex h-12 w-full items-center rounded-xl border bg-white px-3 transition-colors',
+            'dark:bg-gray-800 dark:border-gray-600',
             'focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/20',
             error
               ? 'border-danger-500'
@@ -122,20 +124,20 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           <select
             ref={ref}
             id={selectId}
-            className="h-full w-full min-w-0 flex-1 appearance-none bg-transparent text-base text-secondary-900 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-full w-full min-w-0 flex-1 appearance-none bg-transparent text-base text-secondary-900 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60 dark:text-gray-100 dark:bg-gray-800"
             aria-invalid={!!error}
             {...rest}
           >
             {children}
           </select>
-          <span className="ml-2 shrink-0 text-secondary-500" aria-hidden="true">
+          <span className="ml-2 shrink-0 text-secondary-500 dark:text-gray-400" aria-hidden="true">
             ▾
           </span>
         </div>
         {error ? (
           <p className="mt-1 text-xs text-danger-500">{error}</p>
         ) : hint ? (
-          <p className="mt-1 text-xs text-secondary-500">{hint}</p>
+          <p className="mt-1 text-xs text-secondary-500 dark:text-gray-400">{hint}</p>
         ) : null}
       </div>
     );

@@ -11,6 +11,7 @@ export const Card = React.forwardRef<
       ref={ref}
       className={cn(
         'rounded-2xl border border-secondary-100 bg-surface shadow-card',
+        'dark:bg-gray-900 dark:border-gray-700 dark:shadow-[0_2px_12px_rgba(0,0,0,0.5)]',
         className,
       )}
       {...rest}
@@ -45,7 +46,7 @@ export const CardTitle = React.forwardRef<
   return (
     <h3
       ref={ref}
-      className={cn('text-lg font-bold text-secondary-900', className)}
+      className={cn('text-lg font-bold text-secondary-900 dark:text-gray-100', className)}
       {...rest}
     />
   );
@@ -56,6 +57,6 @@ export const CardDescription = React.forwardRef<
   React.HTMLAttributes<HTMLParagraphElement>
 >(function CardDescription({ className, ...rest }, ref) {
   return (
-    <p ref={ref} className={cn('text-sm text-secondary-500', className)} {...rest} />
+    <p ref={ref} className={cn('text-sm text-secondary-500 dark:text-gray-400', className)} {...rest} />
   );
 });

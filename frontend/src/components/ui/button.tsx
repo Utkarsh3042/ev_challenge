@@ -13,9 +13,10 @@ const VARIANT_STYLES: Record<Variant, string> = {
     'bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700 shadow-sm disabled:bg-primary-300',
   secondary:
     'bg-secondary-900 text-white hover:bg-secondary-500 active:bg-secondary-900 shadow-sm disabled:bg-secondary-50 disabled:text-secondary-300',
-  ghost: 'bg-transparent text-secondary-900 hover:bg-secondary-50 active:bg-secondary-100',
+  ghost:
+    'bg-transparent text-secondary-900 hover:bg-secondary-50 active:bg-secondary-100 dark:text-gray-200 dark:hover:bg-gray-800 dark:active:bg-gray-700',
   outline:
-    'border border-secondary-200 bg-white text-secondary-900 hover:bg-secondary-50 active:bg-secondary-100',
+    'border border-secondary-200 bg-white text-secondary-900 hover:bg-secondary-50 active:bg-secondary-100 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:active:bg-gray-600',
   danger:
     'bg-danger-500 text-white hover:bg-danger-600 active:bg-danger-600 shadow-sm',
 };

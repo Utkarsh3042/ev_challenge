@@ -126,7 +126,7 @@ export function SectionA({ value, onChange, errors }: Props) {
       </Select>
 
       <div>
-        <p className="mb-2 text-sm font-medium text-secondary-900">{t('platform')}</p>
+        <p className="mb-2 text-sm font-medium text-secondary-900 dark:text-gray-200">{t('platform')}</p>
         <div className="grid grid-cols-2 gap-3">
           {platformOptions.map((opt) => {
             const isSelected = value.platforms?.includes(opt.value as any) ?? false;
@@ -144,8 +144,8 @@ export function SectionA({ value, onChange, errors }: Props) {
                 className={cn(
                   'flex cursor-pointer items-center justify-center rounded-xl border p-3 text-sm font-semibold transition-all hover:bg-secondary-50',
                   isSelected
-                    ? 'border-primary-600 bg-primary-50 text-primary-700 shadow-sm'
-                    : 'border-secondary-200 bg-white text-secondary-700'
+                    ? 'border-primary-600 bg-primary-50 text-primary-700 shadow-sm dark:bg-primary-900/30 dark:border-primary-400 dark:text-primary-300'
+                    : 'border-secondary-200 bg-white text-secondary-700 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 dark:hover:border-primary-500'
                 )}
               >
                 {opt.label}
