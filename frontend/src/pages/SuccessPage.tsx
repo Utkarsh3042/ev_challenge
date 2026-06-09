@@ -53,7 +53,7 @@ function SuccessContent({ lang }: { lang: string }) {
           {import.meta.env.VITE_TELEGRAM_BOT_URL && (
             <div className="mt-4">
               <a
-                href={import.meta.env.VITE_TELEGRAM_BOT_URL}
+                href={`${import.meta.env.VITE_TELEGRAM_BOT_URL}${code}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#0088cc]/20 bg-[#0088cc]/10 px-5 py-3 text-sm font-bold text-[#0088cc] shadow-sm transition-all hover:bg-[#0088cc]/20 focus:outline-none focus:ring-2 focus:ring-[#0088cc] focus:ring-offset-2"
