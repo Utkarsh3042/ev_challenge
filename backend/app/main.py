@@ -37,7 +37,21 @@ async def lifespan(app: FastAPI):  # noqa: ARG001 — FastAPI passes app
         "🚀  %s v%s starting in %s mode",
         settings.app_name, __version__, settings.app_env,
     )
+    
+    from app.services.telegram_bot import init_bot, bot_app
+    bot = init_bot()
+    if bot:
+        await bot.initialize()
+        await bot.start()
+        logger.info("Telegram bot initialized via webhook mode.")
+
     yield
+    
+    if bot_app:
+        logger.info("Shutting down Telegram bot")
+        await bot_app.stop()
+        await bot_app.shutdown()
+
     logger.info("🛑  Shutting down — disposing DB engine")
     await dispose_engine()
 

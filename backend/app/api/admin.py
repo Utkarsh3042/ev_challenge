@@ -26,6 +26,7 @@ from app.schemas.admin import (
     SegmentListResponse,
     StatsResponse,
 )
+from pydantic import BaseModel
 from app.services.export import riders_to_csv_stream
 from app.services.stats import get_dashboard_stats
 
@@ -223,3 +224,28 @@ async def list_messages(
         }
         for m in rows
     ]
+
+
+# ---------- Telegram Broadcast ----------------------------------------------
+class BroadcastRequest(BaseModel):
+    message: str
+
+@router.post("/telegram/broadcast")
+async def broadcast_telegram(payload: BroadcastRequest, _: CurrentAdmin, db: DbSession) -> dict:
+    from app.services.telegram_bot import send_notification
+    import asyncio
+    
+    stmt = select(Rider.telegram_chat_id).where(Rider.telegram_chat_id.isnot(None))
+    chat_ids = (await db.execute(stmt)).scalars().all()
+    
+    if not chat_ids:
+        return {"success": False, "message": "No riders have linked their Telegram accounts."}
+
+    sent_count = 0
+    for chat_id in chat_ids:
+        if chat_id is not None:
+            success = await send_notification(chat_id, payload.message)
+            if success:
+                sent_count += 1
+            
+    return {"success": True, "total_targets": len(chat_ids), "sent": sent_count}

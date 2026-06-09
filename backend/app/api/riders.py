@@ -30,6 +30,7 @@ import time
 # Simple in-memory OTP store. For production use Redis.
 otp_store: dict[str, tuple[str, float]] = {}
 from app.services.qr_service import build_share_url, generate_qr_png
+from app.services.telegram_bot import send_notification
 from app.services.referral import (
     award_referral_bonus,
     award_signup_bonus,
@@ -214,6 +215,12 @@ async def submit_rider(
         award = await award_referral_bonus(db, referrer, rider)
         for ms in award.triggered_milestones:
             await dispatcher.send_milestone(db, referrer, ms)
+        
+        if referrer.telegram_chat_id:
+            msg = f"🎉 Great news, {referrer.full_name}! Someone just signed up using your link. You earned points!\n\nNew Balance: {award.new_points} ⚡"
+            import asyncio
+            asyncio.create_task(send_notification(referrer.telegram_chat_id, msg))
+
         await db.flush()
         await db.refresh(referrer)
 

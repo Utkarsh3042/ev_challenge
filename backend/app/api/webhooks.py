@@ -22,6 +22,9 @@ from app.models.whatsapp import WhatsAppMessage
 from app.schemas.whatsapp import WebhookAck
 from app.services.phone import normalize
 from app.services.whatsapp_chatbot import process_message
+from app.services.telegram_bot import bot_app
+from telegram import Update
+from app.config import settings
 
 logger = logging.getLogger("road_warrior.webhook")
 router = APIRouter(tags=["webhooks"])
@@ -81,3 +84,28 @@ async def whatsapp_webhook(
         logger.exception("Webhook payload parse failed: %s", exc)
 
     return WebhookAck(status="ok", reply="processed")
+
+@router.post(
+    "/webhooks/telegram",
+    summary="Telegram inbound webhook",
+)
+async def telegram_webhook(request: Request) -> dict[str, str]:
+    """Accept incoming Telegram updates and route to python-telegram-bot."""
+    if not bot_app:
+        return {"status": "error", "message": "Bot not initialized"}
+
+    # Verify secret token if configured
+    if settings.telegram_webhook_secret:
+        secret = request.headers.get("X-Telegram-Bot-Api-Secret-Token")
+        if secret != settings.telegram_webhook_secret:
+            logger.warning("Invalid Telegram webhook secret token")
+            return {"status": "error", "message": "Unauthorized"}
+
+    try:
+        data = await request.json()
+        update = Update.de_json(data=data, bot=bot_app.bot)
+        await bot_app.process_update(update)
+    except Exception as exc:
+        logger.exception("Telegram webhook failed: %s", exc)
+        
+    return {"status": "ok"}

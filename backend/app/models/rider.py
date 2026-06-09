@@ -112,6 +112,9 @@ class Rider(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     source: Mapped[str] = mapped_column(
         String(20), nullable=False, default="web", server_default="web"
     )
+    # ---------- Telegram ----------
+    telegram_chat_id: Mapped[int | None] = mapped_column(Integer, unique=True, nullable=True)
+
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     def __repr__(self) -> str:  # pragma: no cover

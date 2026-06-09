@@ -78,6 +78,10 @@ class Settings(BaseSettings):
     enable_whatsapp_bot: bool = False
     enable_admin_dashboard: bool = True
 
+    # ---------- Telegram Bot ----------
+    telegram_bot_token: str | None = None
+    telegram_webhook_secret: str | None = None
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def _split_cors(cls, v: object) -> object:
