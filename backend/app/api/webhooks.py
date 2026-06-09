@@ -85,6 +85,17 @@ async def whatsapp_webhook(
 
     return WebhookAck(status="ok", reply="processed")
 
+@router.get("/webhooks/telegram/ping")
+async def telegram_ping(chat_id: int):
+    """Diagnostic endpoint to force a message send."""
+    if not bot_app:
+        return {"error": "bot not initialized"}
+    try:
+        await bot_app.bot.send_message(chat_id=chat_id, text="Ping from Render!")
+        return {"status": "ok"}
+    except Exception as e:
+        return {"error": str(e)}
+
 @router.post(
     "/webhooks/telegram",
     summary="Telegram inbound webhook",
