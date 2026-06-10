@@ -29,7 +29,7 @@ export function KPICard({
     : `bg-gradient-to-br ${gradientFrom} ${gradientTo}`;
 
   return (
-    <Card className={`relative overflow-hidden flex flex-col gap-3 border-none shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md ${gradientClass}`}>
+    <Card className={`relative overflow-hidden p-5 flex flex-col gap-3 border-none shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md ${gradientClass}`}>
       {/* Decorative blurred circle */}
       <div className={`absolute -right-6 -top-6 h-24 w-24 rounded-full blur-2xl ${isDark ? 'bg-white/5' : 'bg-white/20'}`} />
       
